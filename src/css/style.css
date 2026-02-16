@@ -1,0 +1,40 @@
+.items{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+.item{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #878484;
+    width: 250px;
+}
+.imgPay{
+    width: 30px;
+    border-radius: 10px;
+}
+.imgPay:hover{
+    background-color: #F4FAF6;
+}
+.imgMain{
+    width: 100%;
+}
+.information{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.pay{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+.text{
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
