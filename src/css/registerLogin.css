@@ -1,8 +1,51 @@
-.registerLogin>form{
+
+.registerLogin{
     display: flex;
+    width: 100%;
+    height: 100%;
     position: fixed;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(127, 127, 127, 0.2);
+}
+.registerLogin>div>form{
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
 
+.registerLogin>div{
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 10px;
+    width: 500px;
+    height: 500px;
+    box-shadow: -1px 2px 19px 5px rgba(0,0,0,0.52);
+}
+
+.registerLogin>div>form>input[type="submit"]{
+    width: 272px;
+    margin: 25px 0;
+    background-color: #00A046;
+    color: #ffffff;
+}
+.registerLogin>div>form>input{
+    border: 1px solid #bab8b8;
+    border-radius: 5px;
+    justify-content: center;
+    margin-bottom: 10px;
+    padding: 0 10px;
+    width: 250px;
+    height: 40px;
+}
+
+.registerLogin>div>hr{
+    width: 100%;
+    margin: 0 0 20% 0;
+}
+.registerLogin>div>div>h3{
+    margin-left: 20px;
 }

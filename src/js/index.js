@@ -2,7 +2,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     let url = "https://localhost:44353"
     let products = await GetProducts(url);
     let items = document.querySelector('.items');
+
     let token = "";
+    token = localStorage.getItem("token");
+
+    let registerLogin = document.querySelector('.registerLogin');
+    let loginForm = document.querySelector('#loginForm');
     async function GetProducts(url, page = 1) {
         try {
             const response = await fetch(url + `/Product/${page}`, {method: "GET"});
@@ -81,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
 
             if (response.status === 401 || response.status === 403) {
-
+                registerLogin.style.display = "flex";
             }
             else {
                 const text = await response.text();
@@ -98,5 +103,61 @@ document.addEventListener("DOMContentLoaded", async () => {
             const productId = event.currentTarget.dataset.id;
             await AddInCart(url, token, productId);
         });
+    });
+
+    async function login(gmail, password) {
+        try {
+            const res = await fetch(url + "/api/Auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: gmail, password: password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                token = data.token;
+                localStorage.setItem("token", data.token);
+            } else {
+                const errorData = await res.json();
+                console.log("Eror:", res.status, errorData);
+            }
+        } catch (err) {
+            console.log("Error:", err);
+        }
+    }
+
+    async function loginRegister(gmail, password) {
+        try {
+            let res = await fetch(url + "/api/Auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"email": gmail, "password": password})
+            })
+            if(res.status === 400) {
+                const errorData = await res.json();
+                if(errorData.errors[0] === `Username '${gmail}' is already taken.`){
+                    await login(gmail, password);
+                }
+            }
+            else if(res.ok) {
+                const data = await res.json();
+                token = data.token;
+                localStorage.setItem("token", data.token);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        let username = loginForm.querySelector('input[name="email"]').value;
+        let password = loginForm.querySelector('input[name="password"]').value;
+        await loginRegister(username, password);
+        console.log("Отправлено");
     });
 })

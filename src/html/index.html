@@ -4,22 +4,29 @@
     <meta charset="UTF-8">
     <title>Market</title>
     <script src="../js/index.js"></script>
+    <script src="../js/login.js"></script>
     <link rel="stylesheet" href="../css/heder.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/registerLogin.css">
 </head>
 <body>
-    <div class="registerLogin">
-        <form>
-            <input type="email" name="email" placeholder="Ваш Gmail" required>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <input type="submit">
-        </form>
+    <div class="registerLogin" style="display: none">
+        <div>
+            <div>
+                <h3>Login/Register</h3>
+            </div>
+            <hr>
+            <form id="loginForm">
+                <input type="email" name="email" placeholder="Ваш Gmail" required>
+                <input type="password" name="password" placeholder="Пароль" required>
+                <input type="submit">
+            </form>
+        </div>
     </div>
     <header>
         <div class="menuBarr">
             <div class="rightMenu">
-                <img class="headImg" src="/assets/Img/login.png" alt="Login">
+                <img class="headImg login" src="/assets/Img/login.png" alt="Login">
                 <img class="headImg" src="/assets/Img/cart.png" alt="Cart">
             </div>
         </div>
