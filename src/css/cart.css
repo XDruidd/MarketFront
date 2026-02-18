@@ -61,8 +61,9 @@
     cursor: pointer;
 }
 .cart>div>img{
-    width: 100%;
-    border-radius: 20px 20px 0px;
+    width: 150px;
+    height: 100%;
+    border-radius: 20px 0px 0px 20px ;
     justify-content: left;
     align-items: start;
 }
@@ -74,4 +75,21 @@
 }
 .money{
     margin:0 2%;
+}
+.cart{
+    margin-top: 20px;
+}
+.payDiv{
+    display: flex;
+    justify-content: right;
+}
+
+.payAll{
+    background-color: #00BC52;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid #8c8c8c;
+    width: 200px;
+    height: 50px;
+    font-size: 20px;
 }

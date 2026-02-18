@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     let products = await GetProducts(url);
     let items = document.querySelector('.items');
     let countProductInCart = document.querySelector('.countProductInCart');
+    let carts = document.querySelector('.carts');
 
     let token = "";
     token = localStorage.getItem("token");
@@ -140,6 +141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 token = data.token;
                 localStorage.setItem("token", data.token);
                 registerLogin.style.display = "none";
+                await getProductsCount()
             } else {
                 const errorData = await res.json();
                 console.log("Eror:", res.status, errorData);
@@ -169,6 +171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 token = data.token;
                 localStorage.setItem("token", data.token);
                 registerLogin.style.display = "none";
+                await getProductsCount()
             }
         }
         catch (e) {
@@ -184,4 +187,191 @@ document.addEventListener("DOMContentLoaded", async () => {
         await loginRegister(username, password);
         console.log("Отправлено");
     });
+
+
+
+    async function GenerateCart(){
+        try{
+            let res = await fetch(url + "/api/OrderProduct", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            if (res.ok) {
+                carts.innerHTML = ""
+                let data = await res.json();
+                data.oredersProducts.forEach(item => {
+                    let cart = document.createElement("div");
+                    cart.classList.add("cart");
+                    cart.dataset.id = item.product.productId;
+
+                    let divImg = document.createElement("div");
+                    let img = document.createElement("img");
+                    img.src = url + item.product.imgPath;
+
+                    img.onerror = function () {
+                        this.src = "/assets/Img/notFoundImages.png";
+                    };
+                    divImg.appendChild(img);
+                    cart.appendChild(divImg);
+
+                    let description = document.createElement("div");
+                    description.classList.add("description");
+                    description.innerText = item.product.productName;
+                    cart.appendChild(description);
+
+                    let counter = document.createElement("div");
+                    counter.classList.add("counter");
+
+                    let minus = document.createElement("button");
+                    minus.innerText = "-";
+                    minus.classList.add("minus");
+
+                    counter.appendChild(minus);
+
+                    let input = document.createElement("input");
+                    input.type = "number";
+                    input.value = item.count;
+                    input.classList.add("count");
+                    input.min = 1;
+                    input.dataset.id = item.product.productId;
+
+                    counter.appendChild(input);
+
+                    let plus = document.createElement("button");
+                    plus.innerText = "+";
+                    plus.classList.add("plus");
+                    counter.appendChild(plus);
+                    cart.appendChild(counter);
+
+                    let price = document.createElement("div");
+                    price.classList.add("money");
+                    price.innerText = (item.price * item.count) + "₴"
+                    cart.appendChild(price);
+
+                    let deleteImg = document.createElement("img");
+                    deleteImg.classList.add("delete");
+                    deleteImg.src = "/assets/Img/delete.png";
+                    deleteImg.dataset.id = item.product.productId;
+
+                    cart.appendChild(deleteImg);
+
+                    carts.appendChild(cart);
+
+                })
+                let payDiv = document.querySelector(".payDiv");
+                if (payDiv) {
+                    payDiv.innerHTML = "";
+                }
+                else {
+                    payDiv = document.createElement("div");
+                    payDiv.classList.add("payDiv");
+                }
+
+                let butonPay = document.createElement("button");
+                butonPay.classList.add("payAll");
+                butonPay.innerText = data.totalPrice + "$ Замовити";
+                payDiv.appendChild(butonPay);
+                carts.after(payDiv);
+
+
+                }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+
+
+    let cartBackground = document.querySelector('.cartBackground');
+    let cartIcon = document.querySelector('.cartIcon');
+    cartBackground.addEventListener('click', (e) => {
+        if (e.target === cartBackground) {
+            cartBackground.style.display = 'none';
+        }
+    })
+
+    cartIcon.addEventListener('click', async function() {
+        cartBackground.style.display = 'flex';
+        await GenerateCart()
+    })
+
+
+    async function deleteCart(id){
+        if(!Number(id)){
+            return;
+        }
+        try{
+            let res = await fetch(url + `/api/OrderProduct/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            if (res.ok) {
+                const cartItem = document.querySelector(`.cart[data-id="${id}"]`);
+                if (cartItem) cartItem.remove();
+
+                let payAll = document.querySelector(".payAll");
+                let data = await res.json();
+                console.log(data.totalPrice)
+                console.log(data)
+                if (data.totalPrice == 0){
+                    payAll.remove();
+                }
+                else {
+                    payAll.innerText = data.totalPrice + "$ Замовити";
+                }
+                await getProductsCount()
+            }
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
+    document.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('delete')) {
+            const productId = event.target.dataset.id;
+            await deleteCart(productId)
+        }
+
+        // КНОПКА +
+        const plus = event.target.closest(".plus");
+        if (plus) {
+            const counter = plus.closest(".counter");
+            const input = counter.querySelector(".count");
+
+            input.value = +input.value + 1;
+
+            return;
+        }
+
+        // КНОПКА -
+        const minus = event.target.closest(".minus");
+        if (minus) {
+            const counter = minus.closest(".counter");
+            const input = counter.querySelector(".count");
+
+            const min = +input.min || 1;
+            input.value = Math.max(+input.value - 1, min);
+
+            return;
+        }
+    });
+    document.addEventListener("input", (event) => {
+        const input = event.target.closest(".count");
+        if (!input) return;
+
+        const min = +input.min || 1;
+
+        // если пользователь ввёл меньше min → ставим min
+        if (+input.value < min) input.value = min;
+
+        updateProduct(input.dataset.id, input.value);
+    });
+
+
 })
