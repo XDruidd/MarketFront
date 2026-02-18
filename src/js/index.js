@@ -2,12 +2,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     let url = "https://localhost:44353"
     let products = await GetProducts(url);
     let items = document.querySelector('.items');
+    let countProductInCart = document.querySelector('.countProductInCart');
 
     let token = "";
     token = localStorage.getItem("token");
 
     let registerLogin = document.querySelector('.registerLogin');
     let loginForm = document.querySelector('#loginForm');
+
+    await getProductsCount()
     async function GetProducts(url, page = 1) {
         try {
             const response = await fetch(url + `/Product/${page}`, {method: "GET"});
@@ -71,6 +74,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     await CreateProducts(products, url);
 
 
+    async function getProductsCount() {
+        try {
+            const response = await fetch(url + "/api/Order/count", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status == 200) {
+                let data = await response.json();
+                countProductInCart.innerText = data.count;
+            }
+            if (response.status == 204) {
+                countProductInCart.innerText = 0;
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
     async function AddInCart(url, token, productId, count = 1) {
         try {
             const response = await fetch(url + "/api/OrderProduct", {
@@ -88,10 +112,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (response.status === 401 || response.status === 403) {
                 registerLogin.style.display = "flex";
             }
-            else {
-                const text = await response.text();
-                const data = JSON.parse(text);
-                console.log("Відповідь сервера:", data);
+            else if(response.ok || response.status === 201) {
+                await getProductsCount()
             }
         } catch (err) {
             console.error(err);
@@ -117,6 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await res.json();
                 token = data.token;
                 localStorage.setItem("token", data.token);
+                registerLogin.style.display = "none";
             } else {
                 const errorData = await res.json();
                 console.log("Eror:", res.status, errorData);
@@ -145,6 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await res.json();
                 token = data.token;
                 localStorage.setItem("token", data.token);
+                registerLogin.style.display = "none";
             }
         }
         catch (e) {

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../css/heder.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/registerLogin.css">
+    <link rel="stylesheet" href="../css/cart.css">
 </head>
 <body>
     <div class="registerLogin" style="display: none">
@@ -23,11 +24,36 @@
             </form>
         </div>
     </div>
+    <div class="cartBackground" style="display: flex">
+        <div>
+            <div>
+                <h3>Cart</h3>
+            </div>
+            <hr>
+            <div class="carts">
+                <div class="cart">
+                    <div>
+                        <img src="/assets/Img/notFoundImages.png" alt="">
+                    </div>
+                    <div class="description">123213123213123213123213123213123213123213123213123213123213123213123213123213123213123213</div>
+                    <div class="counter">
+                        <button class="minus">−</button>
+                        <input type="number" value="1" class="count" min="1" max="">
+                        <button class="plus">+</button>
+                    </div>
+                    <div class="money">123</div>
+                    <img src="/assets/Img/delete.png" alt="delete" class="delete">
+                </div>
+            </div>
+
+        </div>
+    </div>
     <header>
         <div class="menuBarr">
             <div class="rightMenu">
                 <img class="headImg login" src="/assets/Img/login.png" alt="Login">
                 <img class="headImg" src="/assets/Img/cart.png" alt="Cart">
+                <div class="countProductInCart">0</div>
             </div>
         </div>
     </header>

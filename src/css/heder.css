@@ -34,3 +34,11 @@ body{
     transition-duration: 0.2s;
 }
 
+.countProductInCart{
+    background-color: #00A046;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 100%;
+}
+
+
