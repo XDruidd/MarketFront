@@ -7,6 +7,7 @@ body{
     flex-wrap: wrap;
     justify-content: space-around;
     gap: 0.5rem;
+    margin: 30px 200px;
 }
 .item{
     display: flex;

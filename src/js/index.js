@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
     async function CreateProducts(products, url) {
-
+        items.innerHTML = "";
         products.forEach(item => {
             let mainItem = document.createElement("div");
             mainItem.className = "item";
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             items.appendChild(mainItem);
         })
     }
-    await CreateProducts(products, url);
+        await CreateProducts(products, url);
 
 
     async function getProductsCount() {
@@ -407,4 +407,48 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(error);
         }
     }
+
+
+
+    const paginationContainer = document.querySelector(".pagination"); // контейнер для кнопок
+
+    function renderPagination(totalPages, currentPage = 1, maxButtons = 10) {
+        paginationContainer.innerHTML = "";
+
+        let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+        let end = Math.min(totalPages, start + maxButtons - 1);
+        start = Math.max(1, end - maxButtons + 1);
+
+        for (let i = start; i <= end; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.classList.add("page-btn");
+            paginationContainer.appendChild(btn);
+
+            // навешиваем обработчик сразу
+            btn.addEventListener("click", async () => {
+                currentPage = i;
+                const products = await GetProducts(url, currentPage);
+                await CreateProducts(products, url);
+                renderPagination(totalPages, currentPage, maxButtons);
+            });
+        }
+    }
+    async function totalPage(){
+        let response = await fetch(url + `/Product/page/count`, { method: "GET" });
+        if (response.ok) {
+            let data = await response.json();
+
+            renderPagination(data.countPage)
+        }
+
+    }
+    await totalPage();
+
+    paginationContainer.addEventListener("click", async (e) => {
+        if (e.target.tagName === "BUTTON") {
+            const page = parseInt(e.target.textContent);
+            const products = await GetProducts(url, page);
+        }
+    });
 })
