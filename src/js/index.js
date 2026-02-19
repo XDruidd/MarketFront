@@ -121,12 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    document.querySelectorAll(".imgPay").forEach(imgPay => {
-        imgPay.addEventListener("click", async (event) => {
-            const productId = event.currentTarget.dataset.id;
-            await AddInCart(url, token, productId);
-        });
-    });
+
 
     async function login(gmail, password) {
         try {
@@ -449,6 +444,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (e.target.tagName === "BUTTON") {
             const page = parseInt(e.target.textContent);
             const products = await GetProducts(url, page);
+            await CreateProducts(products, url);
         }
     });
+    items.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("imgPay")) {
+            const productId = event.target.dataset.id;
+            console.log(productId);
+            await AddInCart(url, token, productId);
+        }
+    });
+
 })
