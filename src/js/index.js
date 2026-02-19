@@ -346,6 +346,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             input.value = +input.value + 1;
 
+            let price = counter.nextElementSibling;
+            await updateProduct(input.dataset.id, input.value, input, price);
+
             return;
         }
 
@@ -358,10 +361,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             const min = +input.min || 1;
             input.value = Math.max(+input.value - 1, min);
 
+            let price = counter.nextElementSibling;
+            await updateProduct(input.dataset.id, input.value, input, price);
+
             return;
         }
     });
-    document.addEventListener("input", (event) => {
+    document.addEventListener("input", async (event) => {
         const input = event.target.closest(".count");
         if (!input) return;
 
@@ -370,8 +376,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         // если пользователь ввёл меньше min → ставим min
         if (+input.value < min) input.value = min;
 
-        updateProduct(input.dataset.id, input.value);
+        let counter = input.closest(".counter");
+        let price = counter.nextElementSibling;
+        await updateProduct(input.dataset.id, input.value, input, price);
     });
 
-
+    async function updateProduct(productId, count, input, price){
+        try{
+            let res = await fetch(url + `/api/OrderProduct`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"productId": productId, "count": count})
+            })
+            if (res.ok) {
+                let data = await res.json();
+                data = data.product
+                let totalPrice = document.querySelector(".payAll")
+                totalPrice.innerText = data.totalPrice + "₴ Замовити";
+                input.value = data.count;
+                price.innerText = (data.price * data.count) + "₴";
+            }
+            else {
+                console.log("Недостатньо товару");
+            }
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
 })
